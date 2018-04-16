@@ -8,6 +8,8 @@ class squareBoard:
     def __init__(self):
         self.board = []
         self.board_length = 9
+        self.allDiffsLen = 3
+        self.checkAll = ((0,0), (1,3), (2,6), (3,1), (4,4), (5,7), (6,2), (7,5), (8,8))
         for y in range(self.board_length):
             row = [cell.Cell() for x in range(self.board_length)]
             self.board.append(row)
@@ -123,7 +125,7 @@ class squareBoard:
                 #print('On Square' + str(i) + ','  + str(j))
                 #print('Domain: ' + str(self.board[i][j].domain))
                 allDiff = self.getAllDiffs(i, j)
-                for k in range(len(allDiff)):
+                for k in range(self.allDiffsLen):
                     singles = allDiffs.searchForSingles(allDiff[k])
                     singles2 = []
                     while singles != singles2:
@@ -132,18 +134,50 @@ class squareBoard:
                         singles = allDiffs.searchForSingles(allDiff[k])
                         #If new single is discovered, repeat pruning
 
-    #def solveHiddenSingles(self):
+    def solveHiddenSingles(self):
+        combinedDomain = []
+        for i in range(self.board_length):
+            allDiff = self.getAllDiffs(self.checkAll[i][0], self.checkAll[i][1])
+            for j in range(self.allDiffsLen):
+                for k in range(self.board_length):
+                    # if len(allDiff[j][k].domain) == 1:
+                    #     combinedDomain.append([-1]);
+                    # else:
+                    combinedDomain.append(allDiff[j][k].domain);
+                print 'combined: ', combinedDomain
+                index, value = self.findSingleValue(combinedDomain)
+                if index != -1:
+                    print 'index: ', index, 'value: ', value
+                    print 'cell: ', allDiff[j][index]
+                    allDiff[j][index].domain = [value]
+                combinedDomain = []
 
-     #   for i in range(self.board_length):
-      #      allDiff = self.getAllDiffs()
+    def findSingleValue(self, combinedDomain):
+        occurences = [0,0,0,0,0,0,0,0,0]
+        # count occurences of values in domains
+        for i in range(self.board_length):
+            for j in range(len(combinedDomain[i])):
+                index = combinedDomain[i][j] - 1
+                if len(combinedDomain[i]) == 1:
+                    occurences[index] += 10
+                else:
+                    occurences[index] += 1
+        # return value and index of cell in the allDiff
+        for m in range(len(occurences)):
+            if occurences[m] == 1:
+                for i in range(self.board_length):
+                    for j in range(len(combinedDomain[i])):
+                        if combinedDomain[i][j] == m+1:
+                            return i, m+1
+        return -1, -1
 
     def checkForNples(self):
         nple = []
         for i in range(self.board_length):
             for j in range(self.board_length):
                 allDiff = self.getAllDiffs(i, j) #get allDiffs for every square
-                for k in range(len(allDiff)):
-                    for l in range(len(allDiff[k])):
+                for k in range(self.allDiffsLen):
+                    for l in range(self.board_length):
                         nple.append(allDiff[k][l])
                         for m in range(len(allDiff[k])):
                             if (l != m) and (allDiff[k][l].domain == allDiff[k][m].domain):
@@ -177,6 +211,9 @@ class squareBoard:
             board2 = copy.deepcopy(self.board)
             self.checkForNples()
             print('After Nples')
+            self.printBoard()
+            self.solveHiddenSingles()
+            print('after hidden singles')
             self.printBoard()
             if self.boardIsDone():
                 self.printFinalBoard()

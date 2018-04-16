@@ -43,8 +43,18 @@ lvl4=[[5,0,0,0,0,7,0,2,4],
       [1,0,0,0,3,0,5,0,0],
       [7,5,0,9,0,0,0,0,2]]
 
+lvl5=[[0,2,0,0,0,0,0,9,0],
+      [6,0,0,9,0,5,0,0,4],
+      [0,0,1,0,3,0,5,0,0],
+      [0,8,0,0,9,0,0,4,0],
+      [0,0,3,1,0,8,6,0,0],
+      [0,1,0,0,7,0,0,2,0],
+      [0,0,2,0,6,0,7,0,0],
+      [1,0,0,3,0,2,0,0,8],
+      [0,6,0,0,0,0,0,3,0]]
+
 sudoku = squareBoard.squareBoard()
-sudoku.getExample(lvl2)
+sudoku.getExample(lvl5)
 # sudoku.getStartBoard()
 # sudoku.printBoard()
 #allDiffs = sudoku.getAllDiffs()
